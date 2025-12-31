@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- Ensures the site renders correctly on mobile devices (responsive) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Janak Suthar</title>
+
+  <!-- Preconnect to Font servers for faster loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700&family=Oswald:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      /* Colors based on Bauhaus style (Primary colors + Black/White) */
+      --bauhaus-red: #D22730;
+      --bauhaus-blue: #1D5BB9;
+      --bauhaus-yellow: #F6C83C;
+      --bauhaus-black: #1A1A1A;
+      --bauhaus-white: #F0F0F0;
+      --pure-black: #000000;
+      --pure-white: #ffffff;
+
+      /* Standard spacing units for consistency */
+      --spacing-sm: 1rem;
+      --spacing-md: 1.5rem;
+      --spacing-lg: 3rem;
+      --spacing-xl: 6rem;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Custom highlight color when selecting text */
+    ::selection {
+      background-color: black;
+      color: whitesmoke;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      /* Enables smooth scrolling for anchor links */
+    }
+
+    body {
+      background-color: var(--bauhaus-white);
+      color: var(--bauhaus-black);
+      font-family: 'Manrope', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Headers use a distinct, bold font */
+    h1,
+    h2,
+    h3,
+    .nav-link,
+    .section-title {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Background Grid Lines (Decorative) */
+    .grid-lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
+      display: none;
+      justify-content: space-between;
+    }
+
+    /* Show grid lines only on larger screens (Tablet+) */
+    @media (min-width: 768px) {
+      .grid-lines {
+        display: flex;
+      }
+    }
+
+    .line {
+      width: 1px;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.05);
+      /* Very subtle grey */
+    }
+
+    /* Main Container: Centers content and sets max-width */
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-sm);
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        padding: 0 var(--spacing-md);
+      }
+    }
+
+    .main-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: var(--spacing-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+      /* Ensure it stays on top */
+
+      /* Mix-blend-mode creates the cool "inverse color" effect over white/black backgrounds */
+      mix-blend-mode: difference;
+      color: var(--pure-white);
+      transition: all 0.3s ease;
+    }
+
+    /* State when page is scrolled down */
+    .main-nav.scrolled {
+      background-color: var(--bauhaus-white);
+      color: var(--bauhaus-black);
+      mix-blend-mode: normal;
+      /* Reset blend mode to be readable */
+      /* MODIFIED: Thinner border for cleaner look (was 4px) */
+      border-bottom: 1px solid var(--pure-black);
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    @media (min-width: 768px) {
+      .main-nav {
+        padding: 2.5rem;
+      }
+
+      .main-nav.scrolled {
+        padding: 1rem 2.5rem;
+      }
+    }
+
+    .logo {
+      font-size: 1.875rem;
+      font-weight: 700;
+      letter-spacing: -0.05em;
+    }
+
+    /* Desktop Navigation Links */
+    .nav-links {
+      display: none;
+      /* Hidden on mobile */
+      gap: 2rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+
+    @media (min-width: 768px) {
+      .nav-links {
+        display: flex;
+      }
+    }
+
+    /* Hover Underline Animation */
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-underline {
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      /* Start width 0 */
+      height: 2px;
+      background-color: currentColor;
+      transition: width 0.3s;
+      /* Animate width change */
+    }
+
+    .nav-item:hover .nav-underline {
+      width: 100%;
+      /* Expand to full width on hover */
+    }
+
+    /* Mobile Menu Button (Hamburger) */
+    .menu-btn {
+      font-size: 1.5rem;
+      display: block;
+    }
+
+    @media (min-width: 768px) {
+      .menu-btn {
+        display: none;
+      }
+
+      /* Hide on desktop */
+    }
+
+    #mobile-menu {
+      position: fixed;
+      inset: 0;
+      background-color: var(--bauhaus-black);
+      color: var(--pure-white);
+      z-index: 40;
+      transform: translateX(100%);
+      transition: transform 0.5s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    #mobile-menu.open {
+      transform: translateX(0);
+    }
+
+    #close-menu {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      font-size: 2.25rem;
+      color: var(--pure-white);
+    }
+
+    .mobile-link {
+      font-size: 3rem;
+      font-weight: 700;
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .mobile-link:nth-child(2):hover {
+      color: var(--bauhaus-yellow);
+    }
+
+    .mobile-link:nth-child(3):hover {
+      color: var(--bauhaus-red);
+    }
+
+    .mobile-link:nth-child(4):hover {
+      color: var(--bauhaus-blue);
+    }
+
+    header.hero {
+      position: relative;
+      height: 100vh;
+      /* Full viewport height */
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      /* MODIFIED: Thinner border (was 4px) */
+      border-bottom: 1px solid var(--pure-black);
+    }
+
+    #hero-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      /* Behind content */
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      pointer-events: none;
+      /* Allows clicks to pass through to canvas interactions */
+      mix-blend-mode: difference;
+      color: var(--pure-white);
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 6vw, 6rem);
+      /* Responsive font size based on viewport width */
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .text-red {
+      color: var(--bauhaus-red);
+    }
+
+    /* "Scroll to Explore" indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2.5rem;
+      right: 2.5rem;
+      z-index: 10;
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .scroll-indicator {
+        display: block;
+      }
+    }
+
+    .scroll-text {
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: 0.1em;
+      transform: rotate(-90deg);
+      /* Text running vertically */
+      transform-origin: bottom right;
+    }
+
+    #philosophy {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+      background-color: var(--bauhaus-black);
+      color: var(--bauhaus-white);
+      overflow: hidden;
+      /* MODIFIED: Thinner border (was 4px) */
+      border-bottom: 1px solid var(--pure-black);
+    }
+
+    @media (min-width: 768px) {
+      #philosophy {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+      }
+    }
+
+    .philosophy-header {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .philosophy-header {
+        font-size: 3.75rem;
+      }
+    }
+
+    .philosophy-grid {
+      display: grid;
+      gap: 2rem;
+      font-size: 1rem;
+      font-weight: 300;
+      margin-bottom: 3rem;
+    }
+
+    @media (min-width: 768px) {
+      .philosophy-grid {
+        gap: 3rem;
+        font-size: 1.25rem;
+        grid-template-columns: 1fr 1fr;
+        /* Two columns on desktop */
+      }
+    }
+
+    /* Text Reveal Animation */
+    .reveal-text {
+      transform: translateY(100%);
+      /* Start pushed down */
+      opacity: 0;
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      /* Custom easing */
+    }
+
+    .reveal-text.active {
+      transform: translateY(0);
+      /* Move to original position */
+      opacity: 1;
+    }
+
+    #skills {
+      padding: 5rem 0;
+      background-color: var(--bauhaus-white);
+      /* MODIFIED: Thinner border (was 4px) */
+      border-bottom: 1px solid var(--pure-black);
+    }
+
+    .section-title {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--pure-black);
+      margin-bottom: 3rem;
+      line-height: 1;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tech-stack-container {
+      display: flex;
+      flex-wrap: wrap;
+      /* Allows items to wrap to next line on small screens */
+      gap: 1.5rem;
+      justify-content: flex-start;
+    }
+
+    @media (min-width: 768px) {
+      .tech-stack-container {
+        gap: 2rem;
+      }
+    }
+
+    /* Style for each skill pill */
+    .tech-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 2rem;
+      background-color: var(--pure-white);
+      border: 1px solid var(--pure-black);
+      font-family: sans-serif;
+      font-size: 1.20rem;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      cursor: default;
+    }
+
+    /* Hover effects for pills - pop up + shadow */
+    .tech-pill:hover {
+      background-color: var(--pure-black);
+      color: var(--pure-white);
+    }
+
+    #works {
+      padding: 0;
+      /* Padding handled by internal containers */
+      background-color: var(--pure-white);
+      /* MODIFIED: Thinner border (was 4px) */
+      border-top: 1px solid var(--pure-black);
+    }
+
+    /* Container managing the split layout */
+    .works-container-split {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      /* Mobile: Stacked vertically */
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+    }
+
+    /* Desktop: Side-by-side layout */
+    @media (min-width: 900px) {
+      .works-container-split {
+        flex-direction: row;
+      }
+    }
+
+    /* --- Left Column: Scrolling Text --- */
+    .works-scroll-col {
+      width: 100%;
+      position: relative;
+      z-index: 2;
+      background-color: var(--pure-white);
+    }
+
+    @media (min-width: 900px) {
+      .works-scroll-col {
+        width: 50%;
+      }
+    }
+
+    /* Individual Project Text Block */
+    .work-step {
+      min-height: 50vh;
+      /* Shorter on mobile */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      border-bottom: 1px solid #eee;
+      /* Kept very thin/light */
+    }
+
+    @media (min-width: 768px) {
+      .work-step {
+        padding: 4rem 2.5rem;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .work-step {
+        min-height: 100vh;
+        /* Full viewport height on desktop */
+        border-bottom: 2px solid var(--bauhaus-white);
+        padding: 6rem 5rem;
+      }
+    }
+
+    /* --- Right Column: Sticky Images --- */
+    .works-sticky-col {
+      display: none;
+      /* Hidden on mobile (images are inline instead) */
+      width: 50%;
+      height: 100vh;
+      /* Fills screen height */
+      position: sticky;
+      /* Sticky positioning magic */
+      top: 0;
+      background-color: #f0f0f0;
+      /* MODIFIED: Thinner border (was 4px) */
+      border-left: 1px solid var(--pure-black);
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    @media (min-width: 900px) {
+      .works-sticky-col {
+        display: flex;
+        /* Show only on desktop */
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    /* The actual project image inside sticky col */
+    .sticky-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      /* Hidden by default */
+      transition: opacity 0.6s ease-in-out, transform 0.8s ease;
+      transform: scale(1.1);
+      /* Zoomed in slightly */
+    }
+
+    /* When active class added by JS, show image */
+    .sticky-img.active {
+      opacity: 1;
+      transform: scale(1);
+      /* Zoom back to normal */
+    }
+
+    /* --- Typography inside Work Step --- */
+    .work-step-num {
+      font-family: 'Oswald', sans-serif;
+      font-size: 4rem;
+      font-weight: 700;
+      color: #e5e5e5;
+      /* Grey by default */
+      line-height: 1;
+      margin-bottom: 1rem;
+      transition: color 0.3s;
+    }
+
+    .work-step.active .work-step-num {
+      color: var(--bauhaus-red);
+      /* Highlight active number */
+    }
+
+    .work-step-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2.5rem;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      color: var(--pure-black);
+    }
+
+    @media (min-width: 768px) {
+      .work-step-title {
+        font-size: 3.5rem;
+      }
+    }
+
+    .work-step-desc {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: #555;
+      margin-bottom: 2rem;
+      max-width: 30rem;
+    }
+
+    .work-step-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .work-step-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.35rem 0.75rem;
+      /* MODIFIED: Thinner border (was 1px already but keeping it consistent) */
+      border: 1px solid var(--pure-black);
+      background: transparent;
+    }
+
+    /* Mobile Only Image (shown inside text column on small screens) */
+    .work-mobile-img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      margin-bottom: 2rem;
+      /* MODIFIED: Thinner border (was 2px) */
+      border: 1px solid var(--pure-black);
+    }
+
+    @media (min-width: 900px) {
+      .work-mobile-img {
+        display: none;
+      }
+
+      /* Hide on desktop */
+    }
+
+
+    #contact {
+      position: relative;
+      padding: 4rem 0;
+      background-color: var(--pure-white);
+      border-top: 1px solid var(--pure-black);
+    }
+
+    @media (min-width: 768px) {
+      #contact {
+        padding: 6rem 0;
+      }
+    }
+
+    .contact-grid {
+      display: grid;
+      gap: 3rem;
+    }
+
+    @media (min-width: 768px) {
+      .contact-grid {
+        gap: 4rem;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .contact-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    @media (min-width: 768px) {
+      .contact-title {
+        font-size: 3.75rem;
+      }
+    }
+
+    /* Contact Form Styling */
+    #contact-form {
+      background-color: var(--bauhaus-white);
+      padding: 1.5rem;
+      /* RESTORED: Boxed style with borders and shadow */
+      border: 2px solid var(--pure-black);
+      position: relative;
+    }
+
+    @media (min-width: 768px) {
+      #contact-form {
+        padding: 2rem;
+      }
+    }
+
+    .form-decor-circle {
+      position: absolute;
+      top: -1.5rem;
+      right: -1.5rem;
+      width: 3rem;
+      height: 3rem;
+      background-color: var(--bauhaus-yellow);
+      border-radius: 50%;
+      border: 1px solid var(--pure-black);
+    }
+
+    .form-decor-tri {
+      position: absolute;
+      bottom: -1.5rem;
+      left: -1.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      /* CSS Triangle Hack */
+      background-color: var(--bauhaus-blue);
+      border: 1px solid var(--pure-black);
+    }
+
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      font-size: 0.875rem;
+      color: inherit;
+      letter-spacing: normal;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      background-color: var(--pure-white);
+      /* RESTORED: Full border */
+      border: 1px solid var(--pure-black);
+      padding: 1rem;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: background-color 0.3s, color 0.3s;
+      border-radius: 0;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border: 1px solid var(--pure-black);
+    }
+
+    .submit-btn {
+      width: 100%;
+      /* RESTORED: Solid button style */
+      background-color: var(--pure-black);
+      color: var(--pure-white);
+      font-weight: 700;
+      padding: 1rem;
+      font-size: 1.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: background-color 0.3s;
+      border: none;
+    }
+
+    .submit-btn:hover {
+      background-color: rgb(40, 40, 40);
+    }
+
+    .submit-btn:active {
+      background-color: rgb(65, 65, 65);
+    }
+
+    footer {
+      background-color: var(--pure-black);
+      color: var(--pure-white);
+      padding: 3rem 0;
+      /* MODIFIED: Thinner border (was 4px) */
+      border-top: 1px solid var(--bauhaus-white);
+    }
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .footer-content {
+        flex-direction: row;
+        gap: 0;
+      }
+    }
+
+    .copyright {
+      font-size: 0.875rem;
+      color: #9ca3af;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 0;
+    }
+
+    .social-link {
+      transition: color 0.3s;
+    }
+
+    .social-link:hover.inst {
+      color: var(--bauhaus-yellow);
+    }
+
+    .social-link:hover.lnk {
+      color: var(--bauhaus-red);
+    }
+
+    .social-link:hover.beh {
+      color: var(--bauhaus-blue);
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bauhaus-white);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bauhaus-black);
+      border: 2px solid var(--bauhaus-white);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--bauhaus-red);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Background Grid Lines (Fixed position) -->
+  <div class="grid-lines">
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="line"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="main-nav">
+    <a href="#" class="logo hover-trigger" data-type="alt">Janak</a>
+
+    <div class="nav-links">
+      <a href="#works" class="nav-item hover-trigger">
+        Work
+        <span class="nav-underline"></span>
+      </a>
+      <a href="#skills" class="nav-item hover-trigger">
+        Skills
+        <span class="nav-underline"></span>
+      </a>
+      <a href="#contact" class="nav-item hover-trigger">
+        Contact
+        <span class="nav-underline"></span>
+      </a>
+    </div>
+
+    <!-- Mobile Hamburger Button -->
+    <button id="menu-btn" class="menu-btn hover-trigger">☰</button>
+  </nav>
+
+  <!-- Mobile Fullscreen Menu -->
+  <div id="mobile-menu">
+    <button id="close-menu" class="hover-trigger">&times;</button>
+    <a href="#works" class="mobile-link mobile-link-item hover-trigger">WORK</a>
+    <a href="#skills" class="mobile-link mobile-link-item hover-trigger">SKILLS</a>
+    <a href="#contact" class="mobile-link mobile-link-item hover-trigger">CONTACT</a>
+  </div>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-content">
+      <h1 class="hero-title" id="main-title">
+        Creative<br>
+        frontend<br>
+        <span class="text-red">developer</span>
+      </h1>
+    </div>
+  </header>
+
+  <!-- Philosophy Section -->
+  <section id="philosophy">
+    <div class="container">
+      <h2 class="philosophy-header">My Approach</h2>
+      <div class="philosophy-grid">
+        <p class="reveal-text">I believe that the web is a canvas where logic meets aesthetics. My code is not just
+          functional; it is semantic, accessible, and performant.</p>
+        <p class="reveal-text">Specializing in responsive web applications, I use React and modern JavaScript to build
+          interfaces that are both beautiful and efficient.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills">
+    <div class="container">
+      <h2 class="section-title">Skills</h2>
+
+      <div class="tech-stack-container">
+        <!-- Core Languages -->
+        <div class="tech-pill">JavaScript</div>
+        <div class="tech-pill">React</div>
+        <div class="tech-pill">HTML</div>
+        <div class="tech-pill">CSS</div>
+
+        <!-- Workflow -->
+        <div class="tech-pill">Git</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Selected Works (Scrollytelling) -->
+  <section id="works">
+    <!-- Content injected via JS -->
+    <div id="works-container-root"></div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div>
+          <h2 class="contact-title">Let's Build<br>Together</h2>
+        </div>
+
+        <form id="contact-form">
+          <!-- RESTORED: Geometric decorations -->
+          <div class="form-decor-circle"></div>
+          <div class="form-decor-tri"></div>
+
+          <div class="form-group">
+            <label class="form-label" for="name">Name</label>
+            <input type="text" id="name" name="name" class="form-input hover-trigger" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input type="email" id="email" name="email" class="form-input hover-trigger" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message">Project Details</label>
+            <textarea id="message" name="message" rows="4" class="form-textarea hover-trigger" required></textarea>
+          </div>
+          <button type="submit" class="submit-btn hover-trigger">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <p class="copyright">Janak Suthar</p>
+      <div class="social-links">
+        <a href="#" class="social-link inst hover-trigger">INSTAGRAM</a>
+        <a href="#" class="social-link lnk hover-trigger">LINKEDIN</a>
+        <a href="#" class="social-link beh hover-trigger">BEHANCE</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Logic -->
+  <script>
+    const projects = [
+      {
+        title: "Neon E-Commerce",
+        tags: ["React", "CSS3", "Context API"],
+        image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=708&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        desc: "A fully responsive shopping platform built with React components, featuring dynamic cart state management and a seamless checkout experience.",
+      },
+      {
+        title: "Weather Dash",
+        tags: ["JavaScript", "Fetch API", "CSS Grid"],
+        image: "https://images.unsplash.com/photo-1601887389937-0b02c26b602c?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        desc: "Real-time weather dashboard that fetches data from an open API and displays it using vanilla JavaScript and CSS Grid layouts.",
+      },
+      {
+        title: "Task Master",
+        tags: ["React", "Local Storage", "Hooks"],
+        image: "https://images.unsplash.com/photo-1577084381314-cae9920e6871?q=80&w=582&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        desc: "Productivity application with CRUD functionality, drag-and-drop task management, and local storage persistence.",
+      },
+      {
+        title: "Crypto Tracker",
+        tags: ["React", "API", "Chart.js"],
+        image: "https://images.unsplash.com/photo-1722781905914-6c4972586c4d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        desc: "A clean UI for tracking cryptocurrency prices, demonstrating complex data visualization and real-time API integration.",
+      }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initCanvas();          // Start the hero animation
+      initScrollAnimations();// Start text reveal animations
+      initNavigation();      // Enable mobile menu
+      renderWorksScrolly();  // Build the project section
+      initContactForm();     // Handle form submission
+    });
+
+    function renderWorksScrolly() {
+      const root = document.getElementById('works-container-root');
+
+      // Create Main Container (flex-row on desktop, flex-col on mobile)
+      const mainContainer = document.createElement('div');
+      mainContainer.className = 'works-container-split';
+
+      // Left Column: Scrollable text content
+      const scrollCol = document.createElement('div');
+      scrollCol.className = 'works-scroll-col';
+
+      // Right Column: Sticky container for images
+      const stickyCol = document.createElement('div');
+      stickyCol.className = 'works-sticky-col';
+
+      // Loop through data to build HTML structure
+      projects.forEach((project, index) => {
+        // A. Build Text Card (Left Side)
+        const step = document.createElement('div');
+        step.className = 'work-step';
+        step.dataset.index = index; // Store index for the Observer to use
+
+        const tagsHtml = project.tags.map(t => `<span class="work-step-tag">${t}</span>`).join('');
+
+        step.innerHTML = `
+             <img src="${project.image}" class="work-mobile-img" loading="lazy" alt="${project.title}">
+             <h3 class="work-step-title">${project.title}</h3>
+             <p class="work-step-desc">${project.desc}</p>
+             <div class="work-step-tags">${tagsHtml}</div>
+          `;
+        scrollCol.appendChild(step);
+
+        // B. Build Image (Right Side - Sticky Stack)
+        const img = document.createElement('img');
+        img.src = project.image;
+        img.className = 'sticky-img';
+        img.loading = "lazy"; // Optimization: lazy load images
+        if (index === 0) img.classList.add('active'); // Show first image by default
+        img.id = `sticky-img-${index}`;
+        stickyCol.appendChild(img);
+      });
+
+      mainContainer.appendChild(scrollCol);
+      mainContainer.appendChild(stickyCol);
+      root.appendChild(mainContainer);
+
+      // Initialize the Intersection Observer
+      initScrollyObserver();
+    }
+
+    function initScrollyObserver() {
+      const options = {
+        root: null, // Viewport
+        // Trigger when the element is in the middle 20% of the screen
+        // "Negative margins shrink the detection area"
+        rootMargin: '-40% 0px -40% 0px',
+        threshold: 0
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const idx = entry.target.dataset.index;
+
+            // 1. Highlight Text
+            document.querySelectorAll('.work-step').forEach(el => el.classList.remove('active'));
+            entry.target.classList.add('active');
+
+            // 2. Change Sticky Image
+            document.querySelectorAll('.sticky-img').forEach(img => img.classList.remove('active'));
+            const activeImg = document.getElementById(`sticky-img-${idx}`);
+            if (activeImg) activeImg.classList.add('active');
+          }
+        });
+      }, options);
+
+      document.querySelectorAll('.work-step').forEach(step => observer.observe(step));
+    }
+    // Hero section
+    function initCanvas() {
+      const canvas = document.getElementById('hero-canvas');
+      const ctx = canvas.getContext('2d');
+      let width, height;
+      let shapes = [];
+
+      // Base Shape Class (Parent)
+      class Shape {
+        constructor(x, y, color) {
+          this.x = x;
+          this.y = y;
+          this.color = color;
+          // RESTORED: Original velocity range
+          this.vx = (Math.random() - 0.5) * 1.5;
+          this.vy = (Math.random() - 0.5) * 1.5;
+          this.angle = 0;
+          this.vAngle = (Math.random() - 0.5) * 0.02; // Rotation speed
+
+          // RESTORED: Original size range
+          const minDim = Math.min(width, height);
+          this.size = (Math.random() * 0.08 + 0.04) * minDim;
+        }
+
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.angle += this.vAngle;
+
+          // Bounce off walls logic
+          if (this.x < 0 || this.x > width) this.vx *= -1;
+          if (this.y < 0 || this.y > height) this.vy *= -1;
+        }
+      }
+
+      // Subclasses for specific shapes
+      class Square extends Shape {
+        draw(ctx) {
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.angle);
+          ctx.fillStyle = this.color;
+          ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+          // Bauhaus style outline
+          ctx.strokeStyle = '#1A1A1A';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(-this.size / 2, -this.size / 2, this.size, this.size);
+          ctx.restore();
+        }
+      }
+
+      class Circle extends Shape {
+        draw(ctx) {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size / 2, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+          ctx.strokeStyle = '#1A1A1A';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.closePath();
+
+          // Inner detail (glare)
+          ctx.beginPath();
+          ctx.arc(this.x + 10, this.y - 10, 5, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255,255,255,0.4)";
+          ctx.fill();
+          ctx.closePath();
+        }
+      }
+
+      class Triangle extends Shape {
+        draw(ctx) {
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.angle);
+          ctx.beginPath();
+          ctx.moveTo(0, -this.size / 2);
+          ctx.lineTo(this.size / 2, this.size / 2);
+          ctx.lineTo(-this.size / 2, this.size / 2);
+          ctx.closePath();
+          ctx.fillStyle = this.color;
+          ctx.fill();
+          ctx.strokeStyle = '#1A1A1A';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        initShapes();
+      }
+
+      function initShapes() {
+        shapes = [];
+        const colors = ['#D22730', '#1D5BB9', '#F6C83C'];
+
+        // RESTORED: Original count of 15 shapes
+        for (let i = 0; i < 15; i++) {
+          const type = Math.floor(Math.random() * 3);
+          const color = colors[Math.floor(Math.random() * colors.length)];
+          const x = Math.random() * width;
+          const y = Math.random() * height;
+
+          if (type === 0) shapes.push(new Square(x, y, color));
+          else if (type === 1) shapes.push(new Circle(x, y, color));
+          else shapes.push(new Triangle(x, y, color));
+        }
+      }
+
+      // Track mouse for interaction
+      let mouseX = 0, mouseY = 0;
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      function animate() {
+        // Optimization: Stop animating if scrolled past Hero section
+        if (window.scrollY > window.innerHeight) {
+          requestAnimationFrame(animate);
+          return;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Draw Background Grid
+        ctx.strokeStyle = 'rgba(0,0,0,0.05)';
+        ctx.lineWidth = 1;
+        const gridSize = 100;
+
+        for (let x = 0; x < width; x += gridSize) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+        }
+        for (let y = 0; y < height; y += gridSize) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+        }
+
+        // Draw and Update Shapes
+        shapes.forEach(shape => {
+          // Physics: Repel from mouse
+          const dx = shape.x - mouseX;
+          const dy = shape.y - mouseY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 200) {
+            const force = (200 - dist) / 200;
+            shape.vx += (dx / dist) * force * 0.5;
+            shape.vy += (dy / dist) * force * 0.5;
+          }
+
+          // Physics: Friction (slow down over time)
+          shape.vx *= 0.99;
+          shape.vy *= 0.99;
+
+          shape.update();
+          shape.draw(ctx);
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      animate();
+    }
+
+
+    function initScrollAnimations() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      }, {
+        threshold: 0.1
+      });
+
+      document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
+    }
+
+    function initNavigation() {
+      const menuBtn = document.getElementById('menu-btn');
+      const closeBtn = document.getElementById('close-menu');
+      const menu = document.getElementById('mobile-menu');
+      const links = document.querySelectorAll('.mobile-link');
+      const nav = document.querySelector('.main-nav');
+
+      function toggleMenu() {
+        menu.classList.toggle('open');
+      }
+
+      menuBtn.addEventListener('click', toggleMenu);
+      closeBtn.addEventListener('click', toggleMenu);
+      links.forEach(l => l.addEventListener('click', toggleMenu));
+
+      // Navbar background scroll effect
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      });
+    }
+
+    function initContactForm() {
+      const form = document.getElementById('contact-form');
+      const btn = form.querySelector('.submit-btn');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault(); // Prevent actual page reload
+
+        // Simulate sending state
+        const originalText = btn.innerText;
+        btn.innerText = 'Sending...';
+        btn.style.backgroundColor = '#F6C83C'; // Bauhaus Yellow
+        btn.style.color = '#1A1A1A';
+        btn.style.opacity = '1';
+
+        setTimeout(() => {
+          // Success state - RESTORED to match boxed style
+          form.innerHTML = `
+            <div class="form-decor-circle"></div>
+            <div class="form-decor-tri"></div>
+            <div style="text-align: center; padding: 2rem 0;">
+              <h3 style="font-size: 2rem; margin-bottom: 1rem; color: #1D5BB9;">Message Sent!</h3>
+              <p>Thank you for reaching out. I'll get back to you shortly.</p>
+            </div>
+          `;
+        }, 1500);
+      });
+    }
+
+  </script>
+</body>
+
+</html>
